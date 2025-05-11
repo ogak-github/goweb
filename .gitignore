@@ -1,0 +1,17 @@
+.idea
+.zed
+*.exe
+*.out
+*.test
+/bin/
+/build/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# File OS
+.DS_Store
+
+# Log dan cache
+*.log
