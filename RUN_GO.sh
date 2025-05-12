@@ -1,8 +1,8 @@
 #!/bin/bash
 source .env
 
-export PSQL=$PSQL
+export PSQL=$PSQL_DEV
 export SERVER_PORT=$SERVER_PORT
 export JWT_SECRET=$JWT_SECRET
 
-./app
+go run main.go

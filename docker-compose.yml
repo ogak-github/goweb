@@ -1,18 +1,39 @@
-version: "3.8"
-
 services:
+  gowebapi:
+    build: .
+    container_name: golang-api-todo
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - SERVER_PORT=${SERVER_PORT}
+      - PSQL=${PSQL}
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    volumes:
+      - goweb-data:/app
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    networks:
+      - net-1
+
   postgres:
     image: postgres:15
     container_name: pg-todo
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: todo_db
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/db_schema.sql
     restart: unless-stopped
+    networks:
+      - net-1
 
+networks:
+  net-1:
 volumes:
   postgres-data:
+  goweb-data:
