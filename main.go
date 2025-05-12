@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"fmt"
 	"goweb/app"
 	"goweb/controller"
@@ -14,6 +15,9 @@ import (
 	"os/signal"
 	"time"
 )
+
+//go:embed views/* static/*
+var content embed.FS
 
 func main() {
 	mux := http.DefaultServeMux
@@ -44,7 +48,7 @@ func main() {
 	todoService := service.NewTodoService(db, todoRepo, validatorInstance)
 	todoController := controller.NewTodoController(todoService)
 
-	staticPageController := controller.NewStaticPageController()
+	staticPageController := controller.NewStaticPageController(content)
 
 	// Router setup
 	router := app.Router(authController, todoController, staticPageController)
