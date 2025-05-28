@@ -58,7 +58,11 @@ func (a *AuthRepositoryImpl) RegisterUser(db *pgxpool.Pool, register model.Regis
 
 	registerQuery := `INSERT INTO users (username, password, full_name, email) VALUES ($1, $2, $3, $4)`
 
-	_, err := db.Exec(context.Background(), registerQuery, register)
+	_, err := db.Exec(context.Background(), registerQuery, 
+		register.Username,
+		register.Password,
+		register.FullName,
+		register.Email)
 
 	if err != nil {
 		fmt.Println("Database error: " + err.Error())

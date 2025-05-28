@@ -50,11 +50,10 @@ func (controller *AuthControllerImpl) RegisterUser(writer http.ResponseWriter, r
 	}
 	response, err := controller.AuthService.RegisterUser(registerReq)
 	if err != nil {
-		utils.ResponseBody(writer, http.StatusOK, "OK", err)
+		utils.ResponseBody(writer, http.StatusBadRequest, "Bad Request", err.Error())
 		return
 	}
-	utils.ResponseBody(writer, http.StatusCreated, "Created", &response)
-	return
+	utils.ResponseBody(writer, http.StatusCreated, "Created", response)
 }
 
 func NewAuthController(authService service.AuthService) AuthController {
