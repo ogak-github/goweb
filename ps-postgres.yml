@@ -1,0 +1,24 @@
+services:
+  postgres-storage:
+    image: postgres:15-alpine
+    container_name: pg-storage
+    environment:
+      POSTGRES_USER: ${PG_STORAGE_DATABASE_USER}
+      POSTGRES_PASSWORD: ${PG_STORAGE_DATABASE_PASSWORD}
+      POSTGRES_DB: ${PG_STORAGE_DATABASE_NAME}
+    volumes:
+      - postgres-storage-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_STORAGE_DATABASE_USER} -d ${PG_STORAGE_DATABASE_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgres-storage-data:
+  

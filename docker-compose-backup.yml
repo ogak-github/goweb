@@ -1,0 +1,72 @@
+
+services:
+  gowebapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: golang-api-todo
+    environment:
+      - JWT_SECRET=my-super-jwt-secrets
+      - SERVER_PORT=9001
+      - DATABASE_URL=postgres://admin:root@postgres:5432/todo_db?sslmode=disable
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./:/app
+      - goweb-data:/app/data  # For persistent data if needed
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - net-1
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: pg-todo
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: todo_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d/
+    restart: unless-stopped
+    networks:
+      - net-1
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    
+  postgres-storage:
+    image: postgres:15-alpine
+    container_name: pg-storage
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: powersync_storage_user
+      POSTGRES_PASSWORD: secure_password
+      POSTGRES_DB: todo_db
+    volumes:
+      - postgres-storage-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d/
+    restart: unless-stopped
+    networks:
+      - net-1
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U powersync_storage_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  net-1:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  goweb-data:

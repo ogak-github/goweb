@@ -1,39 +1,30 @@
-services:
-  gowebapi:
-    build: .
-    container_name: golang-api-todo
-    environment:
-      - JWT_SECRET=${JWT_SECRET}
-      - SERVER_PORT=${SERVER_PORT}
-      - PSQL=${PSQL}
-    ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
-    volumes:
-      - goweb-data:/app
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    networks:
-      - net-1
+include:
+  - app-services.yml
 
-  postgres:
-    image: postgres:15
-    container_name: pg-todo
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: ${USER}
-      POSTGRES_PASSWORD: ${PASSWORD}
-      POSTGRES_DB: ${DB}
+services:
+  powersync:
+    depends_on:
+      postgres:
+        condition: service_healthy
+      postgres-storage:
+        condition: service_healthy
+    container_name: goweb-powersync-service
+    image: journeyapps/powersync-service:latest
+    command: ["start", "-r", "unified"]
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/db_schema.sql
-    restart: unless-stopped
+      - ./config:/config
+    environment:
+      - POWERSYNC_CONFIG_PATH=/config/powersync.yml
+      - PS_DATA_SOURCE_URI=${PS_DATA_SOURCE_URI}
+      - PS_STORAGE_SOURCE_URI=${PS_STORAGE_SOURCE_URI}
+      - PS_PORT=${PS_PORT}
+    ports:
+      - "${PS_PORT}:${PS_PORT}"
     networks:
-      - net-1
+      - app-network
+    restart: unless-stopped
 
 networks:
-  net-1:
-volumes:
-  postgres-data:
-  goweb-data:
+  app-network:
+    name: app-network
+    driver: bridge
