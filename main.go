@@ -28,9 +28,7 @@ func main() {
 	//
 
 	// ENV
-	/* serverPort := os.Getenv("SERVER_PORT")
-	dbConnection := os.Getenv("PSQL") */
-	serverPort := "9001"
+	serverPort := os.Getenv("SERVER_PORT")
 	dbConnection := "postgres://admin:root@postgres:5432/todo_db?sslmode=disable"
 	//
 

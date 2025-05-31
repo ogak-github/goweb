@@ -23,6 +23,7 @@ func Router(authController controller.AuthController, todoController controller.
 	router.POST("/api/todo/modify/:id", todoController.ModifyTodo)
 	router.GET("/api/todo/get/:id", todoController.SingleTodo)
 	router.DELETE("/api/todo/delete/:id", todoController.DeleteTodo)
+	router.GET("/api/todo/all", todoController.AllTodo)
 
 	return router
 }

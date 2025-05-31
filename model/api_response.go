@@ -9,6 +9,7 @@ type ApiResponse struct {
 type LoginResponse struct {
 	Token     string `json:"token"`
 	ExpiredIn string `json:"expired_in"`
+	UserData  User   `json:"user_data"`
 }
 
 type LogoutResponse struct {

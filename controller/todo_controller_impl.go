@@ -14,6 +14,19 @@ type TodoControllerImpl struct {
 	todoService service.TodoService
 }
 
+// AllTodo implements TodoController.
+func (ctrl *TodoControllerImpl) AllTodo(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	response, err := ctrl.todoService.AllList()
+
+	if err != nil {
+		utils.ResponseBody(writer, http.StatusOK, "OK", err.Error())
+		return
+	}
+
+	utils.ResponseBody(writer, http.StatusOK, "OK", &response)
+	return
+}
+
 // ModifyTodo implements TodoController.
 func (ctrl *TodoControllerImpl) ModifyTodo(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	userIDRaw := request.Context().Value("user_id")

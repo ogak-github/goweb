@@ -16,11 +16,14 @@ type AuthRepositoryImpl struct {
 
 // Login implements AuthRepository.
 func (service *AuthRepositoryImpl) Login(db *pgxpool.Pool, param model.LoginRequest) (*model.LoginResponse, error) {
-	loginQuery := `SELECT id, password FROM users WHERE username = $1`
+	loginQuery := `SELECT id, username, full_name, email, password FROM users WHERE username = $1`
 
 	var encryptedPassword string
 	var userId string
-	err := db.QueryRow(context.Background(), loginQuery, param.Username).Scan(&userId, &encryptedPassword)
+	var username string
+	var fullName string
+	var email string
+	err := db.QueryRow(context.Background(), loginQuery, param.Username).Scan(&userId, &username, &fullName, &email, &encryptedPassword)
 
 	if err != nil {
 		fmt.Println("Database error: " + err.Error())
@@ -42,10 +45,15 @@ func (service *AuthRepositoryImpl) Login(db *pgxpool.Pool, param model.LoginRequ
 	var result = model.LoginResponse{
 		Token:     generatedJWT,
 		ExpiredIn: time.Now().Add(24 * time.Hour).Local().Format(time.UnixDate),
+		UserData: model.User{
+			Id:       userId,
+			Username: username,
+			FullName: fullName,
+			Email:    email,
+		},
 	}
 
 	return &result, nil
-
 }
 
 // Logout implements AuthRepository.
@@ -58,7 +66,7 @@ func (a *AuthRepositoryImpl) RegisterUser(db *pgxpool.Pool, register model.Regis
 
 	registerQuery := `INSERT INTO users (username, password, full_name, email) VALUES ($1, $2, $3, $4)`
 
-	_, err := db.Exec(context.Background(), registerQuery, 
+	_, err := db.Exec(context.Background(), registerQuery,
 		register.Username,
 		register.Password,
 		register.FullName,

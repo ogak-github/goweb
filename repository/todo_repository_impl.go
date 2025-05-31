@@ -13,6 +13,21 @@ import (
 type TodoRepositoryImpl struct {
 }
 
+// AllList implements TodoRepository.
+func (t TodoRepositoryImpl) AllList(db *pgxpool.Pool) (*[]model.Todo, error) {
+	var todos []model.Todo
+	getTodoListQuery := `SELECT * FROM todo`
+
+	err := pgxscan.Select(context.Background(), db, &todos, getTodoListQuery)
+
+	if err != nil {
+		fmt.Println("Database " + err.Error())
+		return nil, err
+	}
+
+	return &todos, nil
+}
+
 // SingleData implements TodoRepository.
 func (t TodoRepositoryImpl) SingleData(db *pgxpool.Pool, todoId string) (*model.Todo, error) {
 	var todo model.Todo

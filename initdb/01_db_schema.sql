@@ -7,16 +7,23 @@
 ALTER SYSTEM SET wal_level = 'logical';
 
 -- Create a role/user with replication privileges for PowerSync
-CREATE ROLE powersync_user WITH REPLICATION BYPASSRLS LOGIN PASSWORD 'secure_password';
+CREATE ROLE powersync_user WITH REPLICATION BYPASSRLS LOGIN PASSWORD 'my_secure_password';
 
 
 -- Set up permissions for the PowerSync user
-GRANT USAGE ON SCHEMA public TO powersync_user;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO powersync_user;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO powersync_user;
+
+-- To grant permissions to new created tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT SELECT ON TABLES TO powersync_user;
+
+-- Make sure sequences are also granted for user powersync_user
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO powersync_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO powersync_user;
 
 
-
+-- Create publication for logical replication
+CREATE PUBLICATION powersync FOR ALL TABLES;
 
 -- Setup Database
 SET statement_timeout = 0;
@@ -120,5 +127,4 @@ ALTER TABLE ONLY public.todo
 --
 
 
--- Create publication for logical replication
-CREATE PUBLICATION powersync FOR ALL TABLES;
+

@@ -17,6 +17,11 @@ type TodoServiceImpl struct {
 	v          *validator.Validate
 }
 
+// AllList implements TodoService.
+func (service *TodoServiceImpl) AllList() (*[]model.Todo, error) {
+	return service.repository.AllList(service.db)
+}
+
 // Create implements TodoService.
 func (service *TodoServiceImpl) Create(params model.Todo) (*string, error) {
 	err := service.v.Struct(params)

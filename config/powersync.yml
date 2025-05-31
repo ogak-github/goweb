@@ -32,7 +32,7 @@ replication:
   # Note only 1 connection is currently supported
   # Multiple connection support is on the roadmap
   connections:
-    - type: postgres-storage
+    - type: postgresql
       # The PowerSync server container can access the Postgres DB via the DB's service name.
       # In this case the hostname is pg-db
 
@@ -41,12 +41,12 @@ replication:
       # uri: !env PS_DATA_SOURCE_URI
 
       # Or use individual params
-
-      hostname: postgres # From the Docker Compose service name
-      port: 5432
-      database: todo_db
-      username: powersync_storage_user
-      password: secure_password
+      uri: !env PS_DATASOURCE_URI
+      # hostname: postgres # From the Docker Compose service name
+      # port: 5432
+      # database: todo_db
+      # username: powersync_storage_user
+      # password: secure_password
 
       # SSL settings
       sslmode: disable # 'verify-full' (default) or 'verify-ca' or 'disable'
@@ -73,16 +73,19 @@ storage:
   # username: my-mongo-user
   # password: my-password
 
-  hostname: postgres-storage # From the Docker Compose service name
-  port: 5432
-  database: todo_db
-  username: powersync_storage_user
-  password: secure_password
+  # Or use individual params
+  uri: !env PS_STORAGE_URI
+
+  # hostname: postgres-storage # From the Docker Compose service name
+  # port: 5432
+  # database: todo_db
+  # username: powersync_storage_user
+  # password: secure_password
 
   sslmode: disable
 
 # The port which the PowerSync API server will listen on
-port: 9001
+port: !env PS_PORT
 
 # Specify sync rules
 sync_rules:
@@ -100,10 +103,10 @@ client_auth:
   jwks:
     keys:
       - kty: 'RSA'
-        n: 'nbsx37o9QGoJWUmXktw3hv_xQWBJImsc4k-4Ty_SLS07VQC3wnAUjTFk5yD2xLOL25iPd-vbSWgdQ5h2E8oSTW4R3yKVhGbzmvQOSEf3hhWPHxdri_4msYecBnuf31WertRCLCUB4iEgOfVSIAL3o2lr5Rb_Qwn4hCCPUADoScgSI-QOPad-CkfdzVm1Wy_RjNykHG7teOvgEBz9CMtClhIOuhl47OVruAn0IC1D2kX-LRic8_sVDk2fTPPeqNPDGtinV1QLrkAORyj4AGV90hXqI1JKURuiHsmQZjxY89oTIqqx6YoprhiWJB49B0Y5cZQReo87kyblrkCrHf48DQ'
+        n: 'tW0HqCztuaY2gcfGXfIa9nS28l3pIZ3dBKGIEmNXj8YyCiHqsLXOFL5fMouU9flLU0FLrp2GTpj_etRSSll6CTg0q_YP55ilB6mQvTDo3dzWQ1YZqA_hRxjuWRv_UWkSiHLGFNx-SPMLbPp99GiZvlPF_PasI-eHdM3MBbvQcVWsIzAcI24B02rk7wHwSs4gooSuSbo0Nu3pg53RkddXnID177tGXnBjixY0a9gETp1qjsRL0UrvAx2SmaovvRKOCgt1ZWQ-oaN__0dv_syBB4Fl_8ApAlnNepmDioCM8v1Pgm57jQzYznc19WizyOZbXmaYF2r6GDSWlS_lqLtqVw'
         e: 'AQAB'
         alg: 'RS256'
-        kid: 'powersync-1c5b34dd9a'
+        kid: 'powersync-c8dc2e6df0'
 
   # JWKS audience
   audience: ["powersync-dev", "powersync"]

@@ -14,15 +14,16 @@ services:
     volumes:
       - ./config:/config
     environment:
-      - POWERSYNC_CONFIG_PATH=/config/powersync.yml
-      - PS_DATA_SOURCE_URI=${PS_DATA_SOURCE_URI}
-      - PS_STORAGE_SOURCE_URI=${PS_STORAGE_SOURCE_URI}
-      - PS_PORT=${PS_PORT}
+      POWERSYNC_CONFIG_PATH: /config/powersync.yml
+      PS_DATASOURCE_URI: ${PS_DATASOURCE_URI}
+      PS_STORAGE_URI: ${PS_STORAGE_URI}
+      PS_PORT: ${PS_PORT}
     ports:
       - "${PS_PORT}:${PS_PORT}"
     networks:
       - app-network
     restart: unless-stopped
+    
 
 networks:
   app-network:

@@ -41,11 +41,11 @@ func Middleware(next http.Handler) http.Handler {
 				token, err := jwt.Parse(tokenString,
 					func(token *jwt.Token) (any, error) {
 
-						if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+						if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 							return nil, fmt.Errorf("Error signing method")
 						}
 
-						return []byte(utils.JwtSecret), nil
+						return utils.PublicKey, nil
 					})
 				if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 					// Get user id from jwt claims and put to request context for further use
