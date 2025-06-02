@@ -20,7 +20,7 @@ class ListTodo extends HookConsumerWidget {
         users.value = data.userData.email;
       });
       return null;
-    });
+    }, []);
 
     Color randomColorGenerator() {
       return Color.fromARGB(

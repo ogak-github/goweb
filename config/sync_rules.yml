@@ -6,8 +6,33 @@
 # Note that changes to this file are not watched.
 # The service needs to be restarted for changes to take effect.
 
-bucket_definitions:
-  global:
+# Global bucket for shared data (like user profiles)
+# bucket_definitions:
+#   global:
+#     data:
+#       - SELECT id, email, created_at FROM users
+
+#   # User-specific bucket for private data
+#   user_data:
+#     data:
+#       - SELECT * FROM todo WHERE user_id = :user_id
+#     parameters: [user_id]
+
+# # Define access rules for buckets
+# access_rules:
+#   # Public read access to global data
+#   - bucket: global
+#     access: read
+
+#   # Users can access their own data bucket
+#   - bucket: user_data
+#     access: read_write
+#     user_id: "{{.user_id}}"
+
+bucket_definitions: 
+  todo_list:
+    priority: 1
+    parameters: SELECT request.user_id() as user_id
     data:
-      - SELECT * FROM todo
-      - SELECT * FROM users
+      - SELECT * FROM todo WHERE user_id = bucket.user_id
+    

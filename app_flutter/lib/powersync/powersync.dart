@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:app_flutter/models/schema.dart';
 import 'package:app_flutter/provider/auth_provider.dart';
@@ -30,18 +31,20 @@ Future<PowerSyncDatabase> powerSyncInstance(Ref ref) async {
 
   final sf = await SharedPreferences.getInstance();
   final authData = sf.getString('auth_data');
-  final jsonDecode = json.decode(authData ?? '');
-  final data = AuthData.fromJson(jsonDecode);
-  if (authData == null) {
-    return PowerSyncDatabase(schema: schema, path: path);
+
+  final db = PowerSyncDatabase(schema: schema, path: path);
+  await db.initialize(); // make sure initialize selesai sebelum connect
+
+  if (authData != null) {
+    final data = AuthData.fromJson(json.decode(authData));
+
+    db.connect(connector: BackendConnector(baseUrl, data));
   }
 
-  var db = PowerSyncDatabase(schema: schema, path: path);
-  db.initialize();
-
-  db.connect(connector: BackendConnector(baseUrl, data));
-
-  ref.onDispose(db.close);
+  ref.onDispose(() async {
+    await db.disconnectAndClear();
+    await db.close();
+  });
 
   return db;
 }

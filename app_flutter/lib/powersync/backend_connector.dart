@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:app_flutter/models/auth_data.dart';
-import 'package:intl/intl.dart';
 import 'package:powersync/powersync.dart';
 
 import '../data/todo_api.dart';
@@ -15,14 +14,11 @@ class BackendConnector extends PowerSyncBackendConnector {
 
   @override
   Future<PowerSyncCredentials?> fetchCredentials() async {
-    final format = DateFormat('EEE MMM dd HH:mm:ss \'UTC\' yyyy');
-    final parsedDate = format.parseUtc(authData.expiredIn);
     try {
       return PowerSyncCredentials(
-        endpoint: 'http://10.0.2.2:6100',
+        endpoint: 'http://192.168.0.195:6100',
         token: authData.token,
         userId: authData.userData.id,
-        expiresAt: parsedDate,
       );
     } catch (e) {
       log(e.toString(), name: "BackendConnector");
