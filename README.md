@@ -6,4 +6,7 @@ This is just my Golang learning project, there are still many shortcomings and m
 Requirements: Docker and Docker Compose installed
 
 1. Setting up `.env`
-2. Run `docker-compose`
+2. Run `docker compose up --build`
+
+## For Powersync version + flutter app
+Switch to powersync branch
